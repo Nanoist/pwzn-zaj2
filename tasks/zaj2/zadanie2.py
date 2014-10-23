@@ -18,6 +18,16 @@ def load_animals(large_dataset=False):
     with open(str(file), 'rb') as f:
         return pickle.load(f)
 
+def mass_generator(data):
+    mass, unit = data['mass']
+    if unit == 'kg':
+        return mass
+    if unit == 'g':
+        return mass/1000
+    if unit == 'mg':
+        return mass/1E-6
+    if unit == 'Mg':
+        return mass*1000
 
 def filter_animals(animal_list):
     """
@@ -26,7 +36,7 @@ def filter_animals(animal_list):
 
     Dostałeś listę zwierząt które są dostępne w pobliskim zoo do transportu.
 
-    Mususz z tej listy wybrać listę zwierząt które zostaną spakowane na statek,
+    Musisz z tej listy wybrać listę zwierząt które zostaną spakowane na statek,
 
     Lista ta musi spełniać następujące warunki:
 
@@ -50,6 +60,33 @@ def filter_animals(animal_list):
 
     :param animal_list:
     """
+    
+    dict_animal = {}
+    for animal in animal_list:
+        key = animal['genus']
+        if animal['genus'] not in dict_animal:
+            dict_animal[key] = (None, None)
+            if animal['sex'] == 'male':
+                dict_animal[key] = (animal, None)
+            else:
+                dict_animal[key] = (None, animal)
+        else:
+            male, female = dict_animal[key]
+            if animal['sex'] == 'male' and male == None:
+                dict_animal[key] = (animal, female)
+            if animal['sex'] == 'female' and female == None:
+                dict_animal[key] = (male, animal)
 
+            mass = mass_generator(animal)
+            mass_male = mass_generator(male)
+            mass_female = mass_generator(female)
+            if mass < mass_male and animal['sex'] == 'male':
+                dict_animal[key] = (male, animal)
+            if mass < mass_female and animal['sex'] == 'female':
+                dict_animal[key] = (animal, female)
+                
+    print(dict_animal)
 if __name__ == "__main__":
     animals = load_animals()
+    
+filter_animals(animals)
