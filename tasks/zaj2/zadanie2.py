@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 import pickle
 import pathlib
@@ -76,14 +77,16 @@ def filter_animals(animal_list):
                 dict_animal[key] = (animal, female)
             if animal['sex'] == 'female' and female == None:
                 dict_animal[key] = (male, animal)
-
-            mass = mass_generator(animal)
-            mass_male = mass_generator(male)
-            mass_female = mass_generator(female)
-            if mass < mass_male and animal['sex'] == 'male':
-                dict_animal[key] = (male, animal)
-            if mass < mass_female and animal['sex'] == 'female':
-                dict_animal[key] = (animal, female)
+            else:
+                mass = mass_generator(animal)
+                if male != None:
+                    mass_male = mass_generator(male)
+                    if mass < mass_male and animal['sex'] == 'male':
+                        dict_animal[key] = (male, animal)
+                else:
+                    mass_female = mass_generator(female)
+                    if mass < mass_female and animal['sex'] == 'female':
+                        dict_animal[key] = (animal, female)
                 
     print(dict_animal)
 if __name__ == "__main__":
