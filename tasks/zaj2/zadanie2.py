@@ -75,21 +75,29 @@ def filter_animals(animal_list):
             male, female = dict_animal[key]
             if animal['sex'] == 'male' and male == None:
                 dict_animal[key] = (animal, female)
-            if animal['sex'] == 'female' and female == None:
+            elif animal['sex'] == 'female' and female == None:
                 dict_animal[key] = (male, animal)
             else:
                 mass = mass_generator(animal)
                 if male != None:
                     mass_male = mass_generator(male)
                     if mass < mass_male and animal['sex'] == 'male':
-                        dict_animal[key] = (male, animal)
-                else:
+                        dict_animal[key] = (animal, female)
+                elif female != None:
                     mass_female = mass_generator(female)
                     if mass < mass_female and animal['sex'] == 'female':
-                        dict_animal[key] = (animal, female)
+                        dict_animal[key] = (male, animal)
                 
-    print(dict_animal)
+    return dict_animal
 if __name__ == "__main__":
     animals = load_animals()
     
-filter_animals(animals)
+dict_animal = filter_animals(animals)
+dictlist = []
+
+for key, value in dict_animal.items():
+    temp = [key,value]
+    dictlist.append(temp)
+
+dictlist.sort()
+print(dictlist)
